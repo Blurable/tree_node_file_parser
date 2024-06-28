@@ -12,15 +12,15 @@ class Tokens(Enum):
 
 
 class Node:
-    counter: int = 0
+    last_node_id: int = 0
 
     def __init__(self, parent_id: int = 0, name: str = '',
                   value: Optional[Union[str, list[Node]]] = None):
         self.parent_id = parent_id
         self.name = name
         self.value = value
-        Node.counter += 1
-        self.id = Node.counter
+        Node.last_node_id += 1
+        self.id = Node.last_node_id
 
 
     def __str__(self, level = 0):
@@ -36,8 +36,8 @@ class Node:
 
 
 class Parser:
-    def __init__(self, text: str, include_spaces: bool = False):
-        self.tokenizer = Tokenizer(text, include_spaces)
+    def __init__(self, text: str):
+        self.tokenizer = Tokenizer(text)
     
 
     def parse(self):
@@ -77,12 +77,3 @@ class Parser:
 
     def parse_value(self):
         return self.tokenizer.consume(Tokens.VALUE_TOKEN.value)
-
-
-
-
-            
-            
-
-
-    

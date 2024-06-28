@@ -6,7 +6,7 @@ class UnexpectedToken(Exception):
         if token:
             self.message = f"\033[91m{token} didn't match with the text. Position = {text_position}, Token = {text[text_position]}.\033[0m"
         else:
-            self.message = f"\033[91mExcess text.\033[0m"
+            self.message = f"\033[91mUnexpected Token.\033[0m"
         super().__init__(self.message)
 
 
@@ -17,47 +17,47 @@ class UnexpectedEndOfTextError(Exception):
 
 
 class Tokenizer:
-    def __init__(self, text: str, include_spaces: bool = False):
-        self.include_spaces = include_spaces
+    def __init__(self, text: str, is_skip_white_space: bool = False):
+        self.include_spaces = is_skip_white_space
         self.text = text
-        if include_spaces is False:
+        if is_skip_white_space is False:
             self.text = self.text.strip()
-        self.text_position = 0
+        self.cursor = 0
         
 
-    def skip_spaces(self):
+    def skip_white_spaces(self):
         space_pattern = re.compile(r'[\s]*')
-        space = space_pattern.match(self.text, self.text_position)
+        space = space_pattern.match(self.text, self.cursor)
         if space:
-            self.text_position += len(space.group())
+            self.cursor += len(space.group())
 
     
     def is_tokens_left(self):
-        return self.text_position < len(self.text)
+        return self.cursor < len(self.text)
     
 
     def look_up(self, patterns: list[str]):
         if self.include_spaces is False:
-            self.skip_spaces()
+            self.skip_white_spaces()
         if self.is_tokens_left() is False:
             raise UnexpectedEndOfTextError
 
         for pattern in patterns:
             cur_pattern = re.compile(pattern)
-            if cur_pattern.match(self.text, self.text_position):
+            if cur_pattern.match(self.text, self.cursor):
                 return pattern
-        raise UnexpectedToken('Tokens', self.text_position, self.text)
+        raise UnexpectedToken(' '.join(patterns), self.cursor, self.text)
     
 
     def consume(self, pattern: str):
         if self.include_spaces is False:
-            self.skip_spaces()
+            self.skip_white_spaces()
         if self.is_tokens_left() is False:
             raise UnexpectedEndOfTextError
 
         cur_pattern = re.compile(pattern)
-        cur_text = cur_pattern.match(self.text, self.text_position)
+        cur_text = cur_pattern.match(self.text, self.cursor)
         if cur_text:
-            self.text_position += len(cur_text.group())
+            self.cursor += len(cur_text.group())
             return cur_text.group()
-        raise UnexpectedToken(pattern, self.text_position, self.text)
+        raise UnexpectedToken(pattern, self.cursor, self.text)

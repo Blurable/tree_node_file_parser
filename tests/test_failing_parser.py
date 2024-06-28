@@ -29,17 +29,5 @@ def test_failing_parser_no_spaces(text, expected_error):
         parser.parse()
 
 
-@pytest.mark.parametrize("text, expected_error", [
-                        ('parent = {child1 ="value1" child2= "value2"}', UnexpectedToken),
-                        ('name = "value"', UnexpectedToken),
-                        ('root=\n{level1= \n{level2={  level3="deep"}}}', UnexpectedToken),
-                        ('root\n=\n{child1\n=   {grandchild1=\n"value1"} child2="value2"\n }', UnexpectedToken),
-                        ])
-def test_failing_parser_with_spaces(text, expected_error):
-    parser = Parser(text, True)
-
-    with pytest.raises(expected_error):
-        parser.parse()
-
 
 
