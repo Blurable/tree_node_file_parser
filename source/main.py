@@ -1,5 +1,6 @@
 from node_parser.parser import Parser
 
+
 def main():
     try:
         with open('source\\node_parser\\test.txt', 'r') as f:
