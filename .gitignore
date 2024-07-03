@@ -1,0 +1,5 @@
+__pycache__/
+venv/
+parser.egg-info/
+.gitignore/
+.vscode
